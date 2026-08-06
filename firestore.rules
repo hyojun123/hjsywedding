@@ -1,0 +1,50 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 방명록: 누구나 읽고 쓸 수 있음
+    match /guestbook/{doc} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['name','msg','pw','at'])
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() > 0
+                    && request.resource.data.name.size() <= 10
+                    && request.resource.data.msg is string
+                    && request.resource.data.msg.size() > 0
+                    && request.resource.data.msg.size() <= 300
+                    && request.resource.data.pw is string
+                    && request.resource.data.at is number;
+      // 비밀번호 대조는 브라우저에서 수행 (서버가 없는 정적 사이트의 한계).
+      // 예식이 끝나면 false 로 바꿔 잠그는 것을 권합니다.
+      allow delete: if true;
+      allow update: if false;
+    }
+
+    // 참석 여부: 제출만 가능. 하객 명단·연락처이므로 페이지에서 조회 불가.
+    // 집계는 Firebase 콘솔 → Firestore → rsvp 컬렉션에서 확인.
+    match /rsvp/{doc} {
+      allow read, update, delete: if false;
+      allow create: if request.resource.data.keys().hasOnly(['side','attend','name','count','meal','phone','memo','at'])
+                    && request.resource.data.side in ['신랑측','신부측']
+                    && request.resource.data.attend in ['참석','불참']
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() > 0
+                    && request.resource.data.name.size() <= 10
+                    && request.resource.data.count is number
+                    && request.resource.data.count >= 0
+                    && request.resource.data.count <= 20
+                    && request.resource.data.meal is string
+                    && request.resource.data.phone is string
+                    && request.resource.data.phone.size() <= 20
+                    && request.resource.data.memo is string
+                    && request.resource.data.memo.size() <= 200
+                    && request.resource.data.at is number;
+    }
+
+    // 그 외 모든 경로 차단
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

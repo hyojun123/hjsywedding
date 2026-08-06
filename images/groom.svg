@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" role="img" aria-label="신랑 일러스트">
+  <rect width="600" height="600" fill="#F2EDE4"/>
+
+  <!-- 목 -->
+  <path d="M266 348h68v74a34 34 0 0 1-68 0z" fill="#EBCDB6"/>
+  <path d="M266 348h68v30a34 34 0 0 1-68 0z" fill="#DFBDA4"/>
+
+  <!-- 정장 -->
+  <path d="M300 438c-104 0-176 52-198 162h396c-22-110-94-162-198-162z" fill="#343A45"/>
+  <!-- 셔츠 -->
+  <path d="M300 442c-16 0-30 4-42 10l42 148 42-148c-12-6-26-10-42-10z" fill="#FAF8F4"/>
+  <!-- 라펠 -->
+  <path d="M258 452 302 556 272 600h-50l16-140z" fill="#2C313B"/>
+  <path d="M342 452 298 556l30 44h50l-16-140z" fill="#2C313B"/>
+  <!-- 넥타이 -->
+  <path d="M300 470l-15 15 15 15 15-15z" fill="#B79C6E"/>
+  <path d="M300 502l-13 13 9 78 4 7 4-7 9-78z" fill="#B79C6E"/>
+
+  <!-- 귀 -->
+  <ellipse cx="197" cy="282" rx="15" ry="21" fill="#EBCDB6"/>
+  <ellipse cx="403" cy="282" rx="15" ry="21" fill="#EBCDB6"/>
+
+  <!-- 얼굴 -->
+  <ellipse cx="300" cy="266" rx="104" ry="117" fill="#EFD5C0"/>
+
+  <!-- 머리 -->
+  <path d="M197 264c0-104 44-152 103-152s103 48 103 152c-6-38-16-58-32-70-22 12-46 16-74 12-24-4-40-10-52-20-26 12-42 38-48 78z" fill="#2E2A26"/>
+
+  <!-- 눈썹 -->
+  <path d="M244 252c10-8 24-9 34-4M356 252c-10-8-24-9-34-4" stroke="#3A3733" stroke-width="7" stroke-linecap="round" fill="none" opacity=".75"/>
+  <!-- 눈 -->
+  <ellipse cx="263" cy="283" rx="8" ry="9.5" fill="#3A3733"/>
+  <ellipse cx="337" cy="283" rx="8" ry="9.5" fill="#3A3733"/>
+  <!-- 볼 -->
+  <ellipse cx="240" cy="313" rx="19" ry="12" fill="#E8AF95" opacity=".45"/>
+  <ellipse cx="360" cy="313" rx="19" ry="12" fill="#E8AF95" opacity=".45"/>
+  <!-- 코 -->
+  <path d="M300 296v14" stroke="#D9A98D" stroke-width="6" stroke-linecap="round"/>
+  <!-- 입 -->
+  <path d="M283 331q17 15 34 0" stroke="#C08872" stroke-width="6" stroke-linecap="round" fill="none"/>
+</svg>

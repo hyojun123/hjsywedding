@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" role="img" aria-label="신부 일러스트">
+  <rect width="600" height="600" fill="#F2EDE4"/>
+
+  <!-- 베일 -->
+  <path d="M300 92c-106 0-172 84-172 194 0 102-26 212-58 314h460c-32-102-58-212-58-314 0-110-66-194-172-194z" fill="#FFFFFF" opacity=".5"/>
+  <path d="M300 92c-106 0-172 84-172 194 0 102-26 212-58 314M300 92c106 0 172 84 172 194 0 102 26 212 58 314" stroke="#E5DED2" stroke-width="3.5" fill="none" opacity=".7"/>
+
+  <!-- 올림머리(뒤) -->
+  <ellipse cx="300" cy="142" rx="50" ry="42" fill="#3B3129"/>
+
+  <!-- 목 -->
+  <path d="M270 348h60v72a30 30 0 0 1-60 0z" fill="#EBCDB6"/>
+  <path d="M270 348h60v28a30 30 0 0 1-60 0z" fill="#DFBDA4"/>
+
+  <!-- 어깨 -->
+  <path d="M300 438c-84 0-148 48-170 162h340c-22-114-86-162-170-162z" fill="#EFD5C0"/>
+
+  <!-- 드레스 -->
+  <path d="M188 512c28-20 60-26 112-8 52-18 84-12 112 8 16 30 28 59 34 88H154c6-29 18-58 34-88z" fill="#FFFFFF"/>
+  <path d="M188 512c28-20 60-26 112-8 52-18 84-12 112 8" stroke="#DED4C2" stroke-width="4.5" fill="none"/>
+
+  <!-- 귀 + 귀걸이 -->
+  <ellipse cx="199" cy="284" rx="14" ry="19" fill="#EBCDB6"/>
+  <ellipse cx="401" cy="284" rx="14" ry="19" fill="#EBCDB6"/>
+  <circle cx="199" cy="312" r="7" fill="#B79C6E"/>
+  <circle cx="401" cy="312" r="7" fill="#B79C6E"/>
+
+  <!-- 얼굴 -->
+  <ellipse cx="300" cy="266" rx="101" ry="115" fill="#EFD5C0"/>
+
+  <!-- 앞머리 -->
+  <path d="M199 266c0-102 44-150 101-150s101 48 101 150c-6-40-18-60-38-66-18 22-42 30-63 30s-45-8-63-30c-20 6-32 26-38 66z" fill="#3B3129"/>
+
+  <!-- 안개꽃 -->
+  <g fill="#FFFFFF" stroke="#E0D7C7" stroke-width="2">
+    <circle cx="234" cy="200" r="13"/>
+    <circle cx="264" cy="174" r="10"/>
+    <circle cx="212" cy="234" r="8"/>
+  </g>
+  <circle cx="234" cy="200" r="4" fill="#B79C6E"/>
+  <circle cx="264" cy="174" r="3" fill="#B79C6E"/>
+  <circle cx="212" cy="234" r="2.5" fill="#B79C6E"/>
+
+  <!-- 눈썹 -->
+  <path d="M246 252c10-7 23-8 32-3M354 252c-10-7-23-8-32-3" stroke="#4A3F35" stroke-width="6" stroke-linecap="round" fill="none" opacity=".75"/>
+  <!-- 눈 -->
+  <ellipse cx="264" cy="284" rx="8" ry="10" fill="#3A3733"/>
+  <ellipse cx="336" cy="284" rx="8" ry="10" fill="#3A3733"/>
+  <!-- 볼 -->
+  <ellipse cx="242" cy="314" rx="19" ry="12" fill="#E79E8C" opacity=".5"/>
+  <ellipse cx="358" cy="314" rx="19" ry="12" fill="#E79E8C" opacity=".5"/>
+  <!-- 코 -->
+  <path d="M300 297v12" stroke="#D9A98D" stroke-width="6" stroke-linecap="round"/>
+  <!-- 입 -->
+  <path d="M285 331q15 14 30 0" stroke="#C4796B" stroke-width="6" stroke-linecap="round" fill="none"/>
+</svg>
