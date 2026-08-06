@@ -247,40 +247,18 @@ section{padding:76px 30px}
 }
 .copy-btn:active{background:var(--ivory-deep)}
 
-/* ── 참석 여부(RSVP) ───────────────────── */
-.rsvp-lead{text-align:center;font-size:13px;line-height:1.95;color:var(--ink-soft);margin:-14px 0 26px}
-.field{margin-bottom:14px}
-.field-lab{display:block;font-size:12px;letter-spacing:.08em;color:var(--gold);margin-bottom:7px;font-weight:500}
-.seg{display:flex;gap:6px}
-.seg label{flex:1;position:relative;cursor:pointer}
-.seg input{position:absolute;opacity:0;width:0;height:0}
-.seg span{
-  display:block;text-align:center;padding:11px 0;font-size:13px;
-  border:1px solid var(--line);background:var(--ivory);transition:background .18s,color .18s,border-color .18s;
-}
-.sec-alt .seg span{background:var(--card)}
-.seg input:checked+span{background:var(--ink);color:var(--ivory);border-color:var(--ink)}
-.seg input:focus-visible+span{outline:2px solid var(--gold);outline-offset:2px}
-.rsvp-done{
-  text-align:center;padding:34px 20px;border:1px solid var(--line);background:var(--ivory);
-}
-.sec-alt .rsvp-done{background:var(--card)}
-.rsvp-done .t{font-family:var(--serif);font-size:16px;margin-bottom:8px}
-.rsvp-done .d{font-size:12.5px;color:var(--ink-soft);line-height:1.9}
-.rsvp-done button{margin-top:16px;font-size:12px;color:var(--ink-soft);border-bottom:1px solid var(--line);padding-bottom:2px}
-
 /* ── 방명록 ───────────────────────────── */
 .gb-form{display:grid;gap:8px;margin-bottom:22px}
 .gb-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.gb-form input,.gb-form textarea,.gb-input{
+.gb-form input,.gb-form textarea{
   width:100%;padding:12px 13px;background:var(--ivory);
   border:1px solid var(--line);border-radius:var(--radius);
   font-size:13.5px;font-weight:300;outline:none;
 }
-.sec-alt .gb-form input,.sec-alt .gb-form textarea,.sec-alt .gb-input{background:var(--card)}
-.gb-form input:focus,.gb-form textarea:focus,.gb-input:focus{border-color:var(--gold)}
-.gb-form textarea,textarea.gb-input{resize:none;min-height:96px;line-height:1.8}
-.gb-form input::placeholder,.gb-form textarea::placeholder,.gb-input::placeholder{color:var(--ink-faint)}
+.sec-alt .gb-form input,.sec-alt .gb-form textarea{background:var(--card)}
+.gb-form input:focus,.gb-form textarea:focus{border-color:var(--gold)}
+.gb-form textarea{resize:none;min-height:96px;line-height:1.8}
+.gb-form input::placeholder,.gb-form textarea::placeholder{color:var(--ink-faint)}
 .btn-main{
   padding:14px;background:var(--ink);color:var(--ivory);
   font-size:13.5px;letter-spacing:.1em;transition:opacity .2s;
@@ -318,7 +296,7 @@ section:not(.cover)::after{
   content:'';position:absolute;left:22px;top:66px;width:9px;height:9px;
   border-radius:50%;background:var(--gold);
 }
-.label,.sec-title,.greet,.venue,.rsvp-lead,.cal-head{text-align:left}
+.label,.sec-title,.greet,.venue,.cal-head{text-align:left}
 .label{font-family:var(--sans);font-size:10px;letter-spacing:.3em;margin-bottom:5px}
 .sec-title{font-family:var(--sans);font-size:15px;letter-spacing:.16em;margin-bottom:26px}
 .cover-names{font-size:27px}
@@ -507,73 +485,6 @@ section:not(.cover)::after{
       <h2 class="sec-title">마음 전하실 곳</h2>
     </div>
     <div class="reveal" id="giftWrap"></div>
-  </section>
-
-  <!-- ══════════ 참석 여부 ══════════ -->
-  <section>
-    <div class="reveal">
-      <div class="label">R.S.V.P</div>
-      <h2 class="sec-title">참석 여부 전달</h2>
-      <p class="rsvp-lead">
-        축하의 마음으로 참석해 주시는 모든 분들을<br>
-        정성껏 모실 수 있도록 참석 여부를 알려주세요.
-      </p>
-    </div>
-
-    <form class="reveal" id="rsvpForm" autocomplete="off">
-      <div class="field">
-        <span class="field-lab">어느 분의 하객이신가요?</span>
-        <div class="seg">
-          <label><input type="radio" name="side" value="신랑측" required><span>신랑측</span></label>
-          <label><input type="radio" name="side" value="신부측"><span>신부측</span></label>
-        </div>
-      </div>
-
-      <div class="field">
-        <span class="field-lab">참석하시나요?</span>
-        <div class="seg">
-          <label><input type="radio" name="attend" value="참석" required><span>참석</span></label>
-          <label><input type="radio" name="attend" value="불참"><span>불참</span></label>
-        </div>
-      </div>
-
-      <div class="field">
-        <span class="field-lab">성함</span>
-        <input class="gb-input" id="rsvpName" type="text" maxlength="10" placeholder="이름을 입력해주세요" required>
-      </div>
-
-      <div id="rsvpIfAttend">
-        <div class="field">
-          <span class="field-lab">참석 인원 (본인 포함)</span>
-          <input class="gb-input" id="rsvpCount" type="number" inputmode="numeric" min="1" max="20" value="1" required>
-        </div>
-        <div class="field">
-          <span class="field-lab">식사 여부</span>
-          <div class="seg">
-            <label><input type="radio" name="meal" value="식사함" checked><span>식사함</span></label>
-            <label><input type="radio" name="meal" value="식사안함"><span>식사 안 함</span></label>
-          </div>
-        </div>
-      </div>
-
-      <div class="field">
-        <span class="field-lab">연락처 <span style="color:var(--ink-soft);font-weight:300">(선택)</span></span>
-        <input class="gb-input" id="rsvpPhone" type="tel" inputmode="tel" maxlength="20" placeholder="010-0000-0000">
-      </div>
-
-      <div class="field">
-        <span class="field-lab">전하실 말씀 <span style="color:var(--ink-soft);font-weight:300">(선택)</span></span>
-        <textarea class="gb-input" id="rsvpMemo" maxlength="200" placeholder="알러지, 도착 예정 시간 등 알려주실 내용"></textarea>
-      </div>
-
-      <button class="btn-main" type="submit" id="rsvpSubmit" style="width:100%">참석 여부 전달하기</button>
-    </form>
-
-    <div class="rsvp-done reveal" id="rsvpDone" hidden>
-      <div class="t">참석 여부를 전달해 주셔서 감사합니다</div>
-      <div class="d" id="rsvpDoneDetail"></div>
-      <button type="button" id="rsvpEdit">다시 입력하기</button>
-    </div>
   </section>
 
   <!-- ══════════ 방명록 ══════════ -->
@@ -1005,68 +916,6 @@ const storePromise = (async () => {
       localStorage.setItem(name, JSON.stringify(rest));
     },
   };
-})();
-
-/* ── 참석 여부(RSVP) ── */
-(function rsvp() {
-  const form = $('#rsvpForm'), done = $('#rsvpDone'), detail = $('#rsvpDoneDetail');
-  const ifAttend = $('#rsvpIfAttend'), submitBtn = $('#rsvpSubmit');
-  const KEY = 'rsvp:submitted';
-
-  const sel = (n) => form.querySelector(`input[name="${n}"]:checked`);
-
-  function syncAttend() {
-    const absent = sel('attend')?.value === '불참';
-    ifAttend.hidden = absent;
-    $('#rsvpCount').required = !absent;
-  }
-  form.querySelectorAll('input[name="attend"]').forEach((r) => r.addEventListener('change', syncAttend));
-  syncAttend();
-
-  function showDone(d) {
-    const lines = [`${d.side} · ${d.name} 님`, d.attend === '참석' ? `참석 ${d.count}명 · ${d.meal}` : '불참'];
-    detail.innerHTML = lines.join('<br>');
-    form.hidden = true;
-    done.hidden = false;
-    done.classList.add('on');
-  }
-
-  $('#rsvpEdit').onclick = () => { done.hidden = true; form.hidden = false; };
-
-  try {
-    const saved = localStorage.getItem(KEY);
-    if (saved) showDone(JSON.parse(saved));
-  } catch {}
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const attend = sel('attend').value;
-    const data = {
-      side: sel('side').value,
-      attend,
-      name: $('#rsvpName').value.trim(),
-      count: attend === '참석' ? Math.max(1, Math.min(20, +$('#rsvpCount').value || 1)) : 0,
-      meal: attend === '참석' ? sel('meal').value : '',
-      phone: $('#rsvpPhone').value.trim(),
-      memo: $('#rsvpMemo').value.trim(),
-      at: Date.now(),
-    };
-    if (!data.name) return;
-
-    submitBtn.disabled = true;
-    try {
-      const store = await storePromise;
-      await store.add('rsvp', data);
-      try { localStorage.setItem(KEY, JSON.stringify(data)); } catch {}
-      showDone(data);
-      toast('참석 여부가 전달되었습니다');
-    } catch (err) {
-      console.error(err);
-      toast('전달하지 못했습니다. 잠시 후 다시 시도해주세요');
-    } finally {
-      submitBtn.disabled = false;
-    }
-  });
 })();
 
 /* ── 방명록 ── */

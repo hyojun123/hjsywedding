@@ -21,27 +21,6 @@ service cloud.firestore {
       allow update: if false;
     }
 
-    // 참석 여부: 제출만 가능. 하객 명단·연락처이므로 페이지에서 조회 불가.
-    // 집계는 Firebase 콘솔 → Firestore → rsvp 컬렉션에서 확인.
-    match /rsvp/{doc} {
-      allow read, update, delete: if false;
-      allow create: if request.resource.data.keys().hasOnly(['side','attend','name','count','meal','phone','memo','at'])
-                    && request.resource.data.side in ['신랑측','신부측']
-                    && request.resource.data.attend in ['참석','불참']
-                    && request.resource.data.name is string
-                    && request.resource.data.name.size() > 0
-                    && request.resource.data.name.size() <= 10
-                    && request.resource.data.count is number
-                    && request.resource.data.count >= 0
-                    && request.resource.data.count <= 20
-                    && request.resource.data.meal is string
-                    && request.resource.data.phone is string
-                    && request.resource.data.phone.size() <= 20
-                    && request.resource.data.memo is string
-                    && request.resource.data.memo.size() <= 200
-                    && request.resource.data.at is number;
-    }
-
     // 그 외 모든 경로 차단
     match /{document=**} {
       allow read, write: if false;

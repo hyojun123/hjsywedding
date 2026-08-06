@@ -6,7 +6,7 @@
 - 이전 Jekyll 블로그는 `backup-blog` 브랜치에 그대로 보존되어 있습니다.
 
 구성: 커버 → 인사말 → 신랑·신부 → 예식 일시(캘린더·카운트다운) → 갤러리 →
-오시는 길(카카오맵) → 마음 전하실 곳 → **참석 여부(RSVP)** → 방명록 → 공유하기
+오시는 길(카카오맵) → 마음 전하실 곳 → 방명록 → 공유하기
 
 ## 수정하는 곳
 
@@ -19,7 +19,6 @@
 | 인사말, 혼주 성함 | 인사말 섹션 |
 | 신랑·신부 소개, 전화·문자 번호 (`tel:`, `sms:`) | 신랑·신부 섹션 |
 | 지하철·버스·주차 안내 | 오시는 길 섹션 |
-| 참석 여부 안내 문구 | R.S.V.P 섹션 |
 | 카톡 공유 미리보기 문구 | `<head>`의 `<title>`, `og:` 태그 |
 
 ### 2) 설정값 — `index.html` 하단 `CONFIG`
@@ -58,7 +57,7 @@ http://localhost:8000
 >   "https://dapi.kakao.com/v2/maps/sdk.js?appkey=8cb17b61b0c4374685d01eeb5c845d3c"
 > ```
 
-## 데이터 저장소 (방명록 · 참석 여부)
+## 데이터 저장소 (방명록)
 
 `CONFIG.firebase`가 비어 있으면 **작성한 브라우저에만 저장되는 미리보기 모드**로 동작합니다.
 하객들의 응답을 실제로 받으려면 Firebase 연결이 필요합니다.
@@ -103,25 +102,6 @@ Firestore는 스키마가 없는 DB라, **아래 표가 곧 이 페이지가 읽
 | `pw` | string | ✓ | 삭제용 비밀번호 4자리의 SHA-256 해시 (64자 hex) |
 | `at` | number | ✓ | 작성 시각, epoch milliseconds — 정렬 키 |
 
-**`rsvp` 컬렉션** — 참석 여부 (비공개, 콘솔에서만 조회)
-
-| 필드 | 타입 | 필수 | 설명 |
-|---|---|---|---|
-| `side` | string | ✓ | `'신랑측'` \| `'신부측'` |
-| `attend` | string | ✓ | `'참석'` \| `'불참'` |
-| `name` | string | ✓ | 성함, 최대 10자 |
-| `count` | number | ✓ | 참석 인원(본인 포함) 1~20. 불참이면 `0` |
-| `meal` | string | ✓ | `'식사함'` \| `'식사안함'`. 불참이면 빈 문자열 |
-| `phone` | string | ✓ | 연락처(선택 입력) — 미입력 시 빈 문자열 |
-| `memo` | string | ✓ | 전하실 말씀(선택), 최대 200자 — 미입력 시 빈 문자열 |
-| `at` | number | ✓ | 제출 시각, epoch milliseconds |
-
-> 선택 항목도 항상 빈 문자열로 채워 보냅니다. 보안 규칙의 `hasOnly` 검사와 필드 존재 여부를
-> 단순하게 유지하기 위해서입니다.
-
-집계된 참석자 명단은 **Firebase 콘솔 → Firestore → `rsvp` 컬렉션**에서 확인하세요.
-페이지에서는 `rsvp`를 절대 읽지 않습니다 (하객 명단·연락처가 공개되면 안 되므로).
-
 ### 보안 규칙
 
 ```
@@ -144,22 +124,6 @@ service cloud.firestore {
       allow delete: if true;   // 비밀번호 대조는 브라우저에서 수행 (정적 사이트 한계)
       allow update: if false;
     }
-
-    // 참석 여부: 제출만 가능, 조회는 콘솔에서만
-    match /rsvp/{doc} {
-      allow read, update, delete: if false;
-      allow create: if request.resource.data.keys().hasOnly(['side','attend','name','count','meal','phone','memo','at'])
-                    && request.resource.data.side in ['신랑측','신부측']
-                    && request.resource.data.attend in ['참석','불참']
-                    && request.resource.data.name is string
-                    && request.resource.data.name.size() > 0
-                    && request.resource.data.name.size() <= 10
-                    && request.resource.data.count is number
-                    && request.resource.data.count >= 0
-                    && request.resource.data.count <= 20
-                    && request.resource.data.memo.size() <= 200
-                    && request.resource.data.at is number;
-    }
   }
 }
 ```
@@ -168,8 +132,6 @@ service cloud.firestore {
 > - 방명록 비밀번호는 SHA-256으로 해시해 저장하고, 삭제 시 브라우저에서 대조합니다.
 >   서버가 없으므로 규칙상 삭제 자체는 막을 수 없습니다. 예식이 끝나면
 >   `allow delete: if true` → `if false`로 바꿔 잠그는 것을 권합니다.
-> - 참석 여부는 `allow read: if false`라 페이지에서 조회되지 않지만, 누구나 제출은 가능합니다.
->   접수를 마감하려면 `allow create`를 `if false`로 바꾸세요.
 
 ## 로컬에서 확인
 
