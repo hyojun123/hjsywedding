@@ -188,10 +188,17 @@ section{padding:76px 30px}
 .cd-lab{font-size:10px;letter-spacing:.2em;color:var(--ink-soft);font-family:var(--num);text-transform:uppercase}
 
 /* ── 갤러리 (가로 스와이프 슬라이드) ───── */
-.slider-wrap{position:relative}
+.slider-wrap{
+  position:relative;
+  margin:0 -30px;                     /* 섹션 여백 밖으로 넓혀 화면 전체 폭을 사용 */
+  --slider-w:min(var(--page),100vw);  /* 슬라이더가 실제로 차지하는 폭 */
+  --slide-w:calc(var(--slider-w) * .65);  /* ✏️ 값을 줄이면 사진이 작아지고 양옆이 더 보입니다 */
+  --peek:calc((var(--slider-w) - var(--slide-w)) / 2);  /* 양옆에 사진이 걸쳐 보이는 폭 */
+  --arrow:34px;
+}
 .slider{
   display:flex;gap:10px;
-  margin:0 -30px;padding:0 30px;      /* 섹션 여백 밖으로 넓혀 양옆 사진이 살짝 보이게 */
+  padding:0 var(--peek);              /* 첫 장·마지막 장도 가운데에 올 수 있게 */
   overflow-x:auto;overflow-y:hidden;
   scroll-snap-type:x mandatory;
   -webkit-overflow-scrolling:touch;
@@ -199,7 +206,7 @@ section{padding:76px 30px}
 }
 .slider::-webkit-scrollbar{display:none}
 .slide{
-  flex:0 0 calc(100% - 90px);         /* 값을 키우면 사진이 작아지고 양옆이 더 보입니다 */
+  flex:0 0 var(--slide-w);
   scroll-snap-align:center;
   aspect-ratio:1;                     /* ✏️ 사진 비율. 세로로 길게 하려면 4/5 또는 3/4 */
   overflow:hidden;background:var(--ivory-deep);display:block;
@@ -209,13 +216,19 @@ section{padding:76px 30px}
 
 .sl-nav{
   position:absolute;top:50%;transform:translateY(-50%);
-  width:34px;height:34px;border-radius:50%;
-  background:rgba(255,255,255,.85);color:var(--ink);
-  display:grid;place-items:center;font-size:18px;line-height:1;
+  width:var(--arrow);height:var(--arrow);border-radius:50%;
+  background:rgba(255,255,255,.85);
+  display:grid;place-items:center;
   box-shadow:0 1px 7px rgba(0,0,0,.13);
 }
-.sl-prev{left:6px}
-.sl-next{right:6px}
+/* 화살표는 좌우·상하 대칭인 SVG라 원 정중앙에 놓입니다 */
+.sl-nav svg{
+  width:15px;height:15px;display:block;
+  stroke:var(--ink);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+}
+/* 사진 양옆 여백의 한가운데에 좌우 대칭으로 배치 */
+.sl-prev{left:calc((var(--peek) - var(--arrow)) / 2)}
+.sl-next{right:calc((var(--peek) - var(--arrow)) / 2)}
 
 .dots{display:flex;justify-content:center;align-items:center;gap:7px;margin-top:18px}
 .dots span{
@@ -458,8 +471,12 @@ footer .f-date{font-family:var(--num);font-size:12px;letter-spacing:.24em;color:
     <div class="reveal">
       <div class="slider-wrap">
         <div class="slider" id="slider"></div>
-        <button class="sl-nav sl-prev" id="slPrev" type="button" aria-label="이전 사진">&#8249;</button>
-        <button class="sl-nav sl-next" id="slNext" type="button" aria-label="다음 사진">&#8250;</button>
+        <button class="sl-nav sl-prev" id="slPrev" type="button" aria-label="이전 사진">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6 9 12l6 6"/></svg>
+        </button>
+        <button class="sl-nav sl-next" id="slNext" type="button" aria-label="다음 사진">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
       </div>
       <div class="dots" id="dots"></div>
     </div>
