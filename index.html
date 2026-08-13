@@ -187,18 +187,57 @@ section{padding:76px 30px}
 .cd-num{font-family:var(--num);font-size:26px;line-height:1.2;color:var(--ink)}
 .cd-lab{font-size:10px;letter-spacing:.2em;color:var(--ink-soft);font-family:var(--num);text-transform:uppercase}
 
-/* ── 갤러리 ───────────────────────────── */
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
-.grid button{aspect-ratio:1;overflow:hidden;background:var(--ivory-deep);display:block}
-.grid img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
-.grid button:active img{transform:scale(1.06)}
+/* ── 갤러리 (가로 스와이프 슬라이드) ───── */
+.slider-wrap{position:relative}
+.slider{
+  display:flex;gap:10px;
+  margin:0 -30px;padding:0 30px;      /* 섹션 여백 밖으로 넓혀 양옆 사진이 살짝 보이게 */
+  overflow-x:auto;overflow-y:hidden;
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.slider::-webkit-scrollbar{display:none}
+.slide{
+  flex:0 0 calc(100% - 90px);         /* 값을 키우면 사진이 작아지고 양옆이 더 보입니다 */
+  scroll-snap-align:center;
+  aspect-ratio:1;                     /* ✏️ 사진 비율. 세로로 길게 하려면 4/5 또는 3/4 */
+  overflow:hidden;background:var(--ivory-deep);display:block;
+}
+.slide img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.slide:active img{transform:scale(1.04)}
+
+.sl-nav{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:34px;height:34px;border-radius:50%;
+  background:rgba(255,255,255,.85);color:var(--ink);
+  display:grid;place-items:center;font-size:18px;line-height:1;
+  box-shadow:0 1px 7px rgba(0,0,0,.13);
+}
+.sl-prev{left:6px}
+.sl-next{right:6px}
+
+.dots{display:flex;justify-content:center;align-items:center;gap:7px;margin-top:18px}
+.dots span{
+  width:6px;height:6px;border-radius:3px;background:var(--ink-faint);
+  transition:width .3s ease,background .3s ease;
+}
+.dots span.on{width:18px;background:var(--gold)}
 
 .lightbox{
   position:fixed;inset:0;z-index:100;background:rgba(28,26,24,.94);
-  display:none;place-items:center;touch-action:pan-y;
+  display:grid;place-items:center;touch-action:pan-y;
+  opacity:0;visibility:hidden;transition:opacity .28s ease,visibility .28s;
 }
-.lightbox.on{display:grid}
-.lightbox img{max-width:100%;max-height:82vh;object-fit:contain;user-select:none;-webkit-user-drag:none}
+.lightbox.on{opacity:1;visibility:visible}
+.lightbox img{
+  max-width:100%;max-height:82vh;object-fit:contain;user-select:none;-webkit-user-drag:none;
+  transform:scale(.93);transition:transform .34s cubic-bezier(.2,.7,.3,1);
+}
+.lightbox.on img{transform:none}
+@media (prefers-reduced-motion:reduce){
+  .lightbox,.lightbox img{transition:none}
+}
 .lb-close{position:absolute;top:14px;right:14px;width:44px;height:44px;color:#fff;font-size:26px;line-height:1}
 .lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:52px;height:64px;color:#fff;font-size:30px;opacity:.7}
 .lb-prev{left:0}.lb-next{right:0}
@@ -416,7 +455,14 @@ footer .f-date{font-family:var(--num);font-size:12px;letter-spacing:.24em;color:
       <div class="label">Gallery</div>
       <h2 class="sec-title">우리의 순간</h2>
     </div>
-    <div class="grid reveal" id="grid"></div>
+    <div class="reveal">
+      <div class="slider-wrap">
+        <div class="slider" id="slider"></div>
+        <button class="sl-nav sl-prev" id="slPrev" type="button" aria-label="이전 사진">&#8249;</button>
+        <button class="sl-nav sl-next" id="slNext" type="button" aria-label="다음 사진">&#8250;</button>
+      </div>
+      <div class="dots" id="dots"></div>
+    </div>
   </section>
 
   <!-- ══════════ 오시는 길 ══════════ -->
@@ -716,13 +762,59 @@ const photos = CONFIG.gallery.length
   : Array.from({ length: 9 }, (_, i) => placeholder(String(i + 1), 800, 800));
 
 (function gallery() {
-  const grid = $('#grid');
-  grid.innerHTML = photos
-    .map((src, i) => `<button type="button" data-i="${i}"><img src="${src}" alt="사진 ${i + 1}" loading="lazy"></button>`)
+  const slider = $('#slider'), dots = $('#dots');
+  const prevBtn = $('#slPrev'), nextBtn = $('#slNext');
+
+  slider.innerHTML = photos
+    .map((src, i) => `<button class="slide" type="button" data-i="${i}"><img src="${src}" alt="사진 ${i + 1}" loading="lazy"></button>`)
     .join('');
-  grid.querySelectorAll('img').forEach((img, i) => {
+  slider.querySelectorAll('img').forEach((img, i) => {
     img.onerror = () => { img.onerror = null; img.src = placeholder(String(i + 1), 800, 800); };
   });
+  dots.innerHTML = photos.map((_, i) => `<span class="${i === 0 ? 'on' : ''}"></span>`).join('');
+
+  const slides = [...slider.querySelectorAll('.slide')];
+  const mid = (el) => { const r = el.getBoundingClientRect(); return r.left + r.width / 2; };
+
+  /* 화면 한가운데에 가장 가까운 슬라이드 = 지금 보고 있는 사진 */
+  function currentSlide() {
+    const c = mid(slider);
+    let best = 0, bestDist = Infinity;
+    slides.forEach((s, i) => {
+      const d = Math.abs(mid(s) - c);
+      if (d < bestDist) { bestDist = d; best = i; }
+    });
+    return best;
+  }
+
+  let cur = 0;
+  function sync() {
+    const i = currentSlide();
+    if (i === cur) return;
+    cur = i;
+    [...dots.children].forEach((d, n) => d.classList.toggle('on', n === i));
+  }
+
+  /* 끝에서 넘기면 처음으로, 처음에서 되돌리면 끝으로 순환.
+     순환할 때는 사진을 전부 훑고 지나가지 않도록 곧바로 이동 */
+  function go(i) {
+    const n = slides.length;
+    const t = ((i % n) + n) % n;
+    const wrapped = Math.abs(t - currentSlide()) > 1;
+    slider.scrollTo({
+      left: slider.scrollLeft + mid(slides[t]) - mid(slider),
+      behavior: wrapped ? 'auto' : 'smooth',
+    });
+  }
+  prevBtn.onclick = () => go(currentSlide() - 1);
+  nextBtn.onclick = () => go(currentSlide() + 1);
+
+  let raf = 0;
+  slider.addEventListener('scroll', () => {
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(sync);
+  }, { passive: true });
+  sync();
 
   const lb = $('#lb'), lbImg = $('#lbImg'), lbCount = $('#lbCount');
   let idx = 0;
@@ -735,8 +827,8 @@ const photos = CONFIG.gallery.length
   const open  = (i) => { show(i); lb.classList.add('on'); document.body.style.overflow = 'hidden'; };
   const close = ()  => { lb.classList.remove('on'); document.body.style.overflow = ''; };
 
-  grid.addEventListener('click', (e) => {
-    const btn = e.target.closest('button[data-i]');
+  slider.addEventListener('click', (e) => {
+    const btn = e.target.closest('.slide');
     if (btn) open(+btn.dataset.i);
   });
   $('#lbClose').onclick = close;
