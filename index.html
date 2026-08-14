@@ -607,7 +607,7 @@ footer .f-date{font-family:var(--num);font-size:12px;letter-spacing:.24em;color:
 <!-- ══════════ 배경 음악 ══════════ -->
 <audio id="bgm" src="bgm/bgm.mp3" loop preload="none"></audio>
 <div class="bgm-dock">
-  <button class="bgm-btn" id="bgmBtn" type="button" aria-pressed="false" aria-label="배경 음악 켜기">
+  <button class="bgm-btn on" id="bgmBtn" type="button" aria-pressed="true" aria-label="배경 음악 끄기">
     <svg class="ic-on" viewBox="0 0 24 24" aria-hidden="true">
       <path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/>
     </svg>
@@ -1141,36 +1141,35 @@ const storePromise = (async () => {
 (() => {
   const audio = $('#bgm');
   const btn = $('#bgmBtn');
+  const EVENTS = ['pointerdown', 'touchstart', 'scroll', 'keydown'];
+
+  // 기본값은 켜짐. 자동 재생을 막는 브라우저에서도 버튼은 켜짐으로 두고,
+  // 첫 화면 조작이 들어오는 순간 소리가 나오게 합니다.
+  let on = true;
 
   const sync = () => {
-    const on = !audio.paused;
     btn.classList.toggle('on', on);
     btn.setAttribute('aria-pressed', String(on));
     btn.setAttribute('aria-label', on ? '배경 음악 끄기' : '배경 음악 켜기');
   };
-  audio.addEventListener('play', sync);
-  audio.addEventListener('pause', sync);
 
-  // 브라우저가 자동 재생을 막으면 첫 화면 조작 때 재생
-  let armed = true;
-  const kick = () => {
-    if (!armed) return;
-    armed = false;
-    ['click', 'touchstart', 'scroll', 'keydown'].forEach((t) => document.removeEventListener(t, kick));
-    audio.play().catch(() => {});
-  };
+  function kick(e) {
+    if (e.target.closest && e.target.closest('#bgmBtn')) return;  // 버튼 조작은 아래에서 처리
+    if (on) audio.play().catch(() => {});
+  }
+  const arm = () => EVENTS.forEach((t) => document.addEventListener(t, kick, { passive: true }));
+  const disarm = () => EVENTS.forEach((t) => document.removeEventListener(t, kick));
+  audio.addEventListener('play', disarm);
 
   btn.addEventListener('click', () => {
-    armed = false;
-    if (audio.paused) audio.play().catch(() => toast('음악을 재생할 수 없습니다'));
-    else audio.pause();
+    on = !on;
+    if (on) audio.play().catch(() => toast('음악을 재생할 수 없습니다'));
+    else { audio.pause(); disarm(); }
+    sync();
   });
 
-  audio.play().catch(() => {
-    ['click', 'touchstart', 'scroll', 'keydown'].forEach((t) =>
-      document.addEventListener(t, kick, { passive: true })
-    );
-  });
+  sync();
+  audio.play().catch(arm);
 })();
 </script>
 </body>
