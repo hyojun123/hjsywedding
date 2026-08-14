@@ -347,6 +347,29 @@ footer .f-date{font-family:var(--num);font-size:12px;letter-spacing:.24em;color:
   opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;
 }
 .toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* 배경 음악 버튼 — 페이지 프레임 우측 상단에 고정 */
+.bgm-dock{
+  position:fixed;top:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:var(--page);
+  z-index:90;pointer-events:none;
+}
+.bgm-btn{
+  position:absolute;top:16px;right:16px;
+  width:38px;height:38px;border-radius:50%;
+  display:grid;place-items:center;
+  pointer-events:auto;
+  color:var(--gold);
+  background:rgba(var(--surface-rgb),.62);
+  border:1px solid var(--line);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  transition:background .3s,color .3s;
+}
+.bgm-btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+.bgm-btn .ic-on{display:none}
+.bgm-btn.on .ic-on{display:block}
+.bgm-btn.on .ic-off{display:none}
+.bgm-btn.on{color:var(--on-gold);background:rgba(183,156,110,.9);border-color:transparent}
 </style>
 </head>
 <body>
@@ -580,6 +603,20 @@ footer .f-date{font-family:var(--num);font-size:12px;letter-spacing:.24em;color:
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- ══════════ 배경 음악 ══════════ -->
+<audio id="bgm" src="bgm/bgm.mp3" loop preload="none"></audio>
+<div class="bgm-dock">
+  <button class="bgm-btn" id="bgmBtn" type="button" aria-pressed="false" aria-label="배경 음악 켜기">
+    <svg class="ic-on" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/>
+    </svg>
+    <svg class="ic-off" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/>
+      <path d="M3 21 21 3"/>
+    </svg>
+  </button>
+</div>
 
 <script>
 /* ═══════════════════════════════════════════════════════════
@@ -1098,6 +1135,42 @@ const storePromise = (async () => {
     store = await storePromise;
     await reload();
   })();
+})();
+
+/* ── 배경 음악 ── */
+(() => {
+  const audio = $('#bgm');
+  const btn = $('#bgmBtn');
+
+  const sync = () => {
+    const on = !audio.paused;
+    btn.classList.toggle('on', on);
+    btn.setAttribute('aria-pressed', String(on));
+    btn.setAttribute('aria-label', on ? '배경 음악 끄기' : '배경 음악 켜기');
+  };
+  audio.addEventListener('play', sync);
+  audio.addEventListener('pause', sync);
+
+  // 브라우저가 자동 재생을 막으면 첫 화면 조작 때 재생
+  let armed = true;
+  const kick = () => {
+    if (!armed) return;
+    armed = false;
+    ['click', 'touchstart', 'scroll', 'keydown'].forEach((t) => document.removeEventListener(t, kick));
+    audio.play().catch(() => {});
+  };
+
+  btn.addEventListener('click', () => {
+    armed = false;
+    if (audio.paused) audio.play().catch(() => toast('음악을 재생할 수 없습니다'));
+    else audio.pause();
+  });
+
+  audio.play().catch(() => {
+    ['click', 'touchstart', 'scroll', 'keydown'].forEach((t) =>
+      document.addEventListener(t, kick, { passive: true })
+    );
+  });
 })();
 </script>
 </body>
